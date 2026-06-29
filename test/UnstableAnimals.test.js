@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("UnstableAnimals", function () {
   const URI = "ipfs://QmQDWG92prsc64fPoeVtKrSZhR3RM2PCaCBCJLdH7A1vaK";
-  const price = ethers.utils.parseEther("0.05");
+  const price = ethers.parseEther("0.05");
 
   let unstableAnimals;
   let owner;
@@ -13,7 +13,7 @@ describe("UnstableAnimals", function () {
     [owner, buyer] = await ethers.getSigners();
     const UnstableAnimals = await ethers.getContractFactory("UnstableAnimals");
     unstableAnimals = await UnstableAnimals.deploy("Unstable Animals", "UA", URI);
-    await unstableAnimals.deployed();
+    await unstableAnimals.waitForDeployment();
   });
 
   it("sets the deployer as owner", async function () {
@@ -27,7 +27,7 @@ describe("UnstableAnimals", function () {
   describe("mintUnstableAnimalsGroup", function () {
     it("allows the owner to mint specific token ids", async function () {
       await unstableAnimals.mintUnstableAnimalsGroup([1, 2, 3]);
-      expect(await unstableAnimals.UnstableAnimalsMinted()).to.equal(3);
+      expect(await unstableAnimals.UnstableAnimalsMinted()).to.equal(3n);
       expect(await unstableAnimals.ownerOf(1)).to.equal(owner.address);
       expect(await unstableAnimals.ownerOf(2)).to.equal(owner.address);
       expect(await unstableAnimals.ownerOf(3)).to.equal(owner.address);
@@ -55,8 +55,8 @@ describe("UnstableAnimals", function () {
     });
 
     it("mints tokens when sale is enabled and payment is correct", async function () {
-      await unstableAnimals.connect(buyer).buy(2, { value: price.mul(2) });
-      expect(await unstableAnimals.UnstableAnimalsMinted()).to.equal(2);
+      await unstableAnimals.connect(buyer).buy(2, { value: price * 2n });
+      expect(await unstableAnimals.UnstableAnimalsMinted()).to.equal(2n);
       expect(await unstableAnimals.ownerOf(1)).to.equal(buyer.address);
       expect(await unstableAnimals.ownerOf(2)).to.equal(buyer.address);
     });
@@ -70,7 +70,7 @@ describe("UnstableAnimals", function () {
 
     it("reverts when payment is incorrect", async function () {
       await expect(
-        unstableAnimals.connect(buyer).buy(1, { value: price.div(2) })
+        unstableAnimals.connect(buyer).buy(1, { value: price / 2n })
       ).to.be.revertedWith("Invalid amount of ether for amount to buy");
     });
 
@@ -79,7 +79,7 @@ describe("UnstableAnimals", function () {
         "Invalid amount"
       );
       await expect(
-        unstableAnimals.connect(buyer).buy(11, { value: price.mul(11) })
+        unstableAnimals.connect(buyer).buy(11, { value: price * 11n })
       ).to.be.revertedWith("Invalid amount");
     });
   });
@@ -93,7 +93,7 @@ describe("UnstableAnimals", function () {
     });
 
     it("allows the owner to update price and counter", async function () {
-      const newPrice = ethers.utils.parseEther("0.1");
+      const newPrice = ethers.parseEther("0.1");
       await unstableAnimals.setPrice(newPrice);
       expect(await unstableAnimals.price()).to.equal(newPrice);
 
@@ -107,9 +107,10 @@ describe("UnstableAnimals", function () {
       await unstableAnimals.setSaleEnabled(true);
       await unstableAnimals.connect(buyer).buy(1, { value: price });
 
-      expect(await ethers.provider.getBalance(unstableAnimals.address)).to.equal(price);
+      const contractAddress = await unstableAnimals.getAddress();
+      expect(await ethers.provider.getBalance(contractAddress)).to.equal(price);
       await unstableAnimals.withdraw();
-      expect(await ethers.provider.getBalance(unstableAnimals.address)).to.equal(0);
+      expect(await ethers.provider.getBalance(contractAddress)).to.equal(0n);
     });
 
     it("reverts when a non-owner calls owner-only functions", async function () {

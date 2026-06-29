@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { utils } from 'ethers'
+import { formatEther } from 'ethers'
 import Modal from 'react-modal'
 import AnimateOnChange from 'react-animate-on-change'
 import UnstableGIF from './images/UnstableGIF.gif'
@@ -8,7 +8,7 @@ import MetaMaskLogo from './images/mm-logo.svg?react'
 import './MintSection.css'
 import './pixelLoader.css'
 import { createContractStateHook } from './createContractStateHook'
-import { resolveProvider } from './resolveProvider'
+import { hasWallet, resolveProvider } from './resolveProvider'
 import { createContractHelper } from './createContractHelper'
 import UnstableAnimals from './UnstableAnimals.json'
 import MintGallery from './MintGallery'
@@ -23,7 +23,12 @@ import {
 } from './config/contract'
 
 const provider = resolveProvider()
-const unstableAnimals = createContractHelper(CONTRACT_ADDRESS, UnstableAnimals.abi, provider)
+const unstableAnimals = createContractHelper(
+  CONTRACT_ADDRESS,
+  UnstableAnimals.abi,
+  provider,
+  hasWallet()
+)
 const useUnstableAnimalsState = createContractStateHook(unstableAnimals.reader)
 
 export const APP_STATE = {
@@ -35,6 +40,10 @@ export const APP_STATE = {
 
 if (typeof window !== 'undefined' && window.ethereum) {
   window.ethereum.on('chainChanged', () => window.location.reload())
+}
+
+function toNumber(value) {
+  return typeof value === 'bigint' ? Number(value) : value
 }
 
 function MintSection() {
@@ -64,23 +73,23 @@ function MintSection() {
 
   const [buyPrice] = useUnstableAnimalsState({
     stateVarName: 'price',
-    initialData: utils.parseUnits('0'),
+    initialData: 0n,
     transformData: (data) => ({
       wei: data,
-      number: utils.formatEther(data),
+      number: formatEther(data),
     }),
   })
 
   const [isSaleActive, _, __, refreshIsSaleActive] = useUnstableAnimalsState('saleEnabled', true)
   const [unstableAnimalsMinted, ___, ____, refreshUnstableAnimalsMinted] = useUnstableAnimalsState({
     stateVarName: 'UnstableAnimalsMinted',
-    transformData: (data) => data.toNumber(),
+    transformData: toNumber,
     swrOptions: { refreshInterval: 6000 },
   })
   const [maxUnstableAnimalsCount] = useUnstableAnimalsState({
-    initialData: utils.parseUnits('10000', 'wei'),
+    initialData: 10000n,
     stateVarName: 'MAX_SUPPLY',
-    transformData: (data) => data.toNumber(),
+    transformData: toNumber,
   })
 
   let allSold = maxUnstableAnimalsCount === unstableAnimalsMinted
@@ -119,7 +128,7 @@ function MintSection() {
 
   async function ensureMainnet() {
     const network = await provider.getNetwork()
-    if (network.chainId !== CHAIN_ID) {
+    if (Number(network.chainId) !== CHAIN_ID) {
       throw new Error('Please use Ethereum Mainnet')
     }
   }
@@ -137,18 +146,19 @@ function MintSection() {
       return
     }
 
-    if (!buyAmount || !parseInt(buyAmount) || !buyPrice?.wei) return
+    if (!buyAmount || !parseInt(buyAmount) || buyPrice?.wei === undefined) return
 
-    const etherAmount = buyPrice.wei.mul(buyAmount)
+    const etherAmount = buyPrice.wei * BigInt(buyAmount)
     await requestAccount()
 
     let txHash
     try {
       await ensureMainnet()
 
-      const transaction = await unstableAnimals.signer.buy(buyAmount, {
+      const signerContract = await unstableAnimals.getSignerContract()
+      const transaction = await signerContract.buy(buyAmount, {
         value: etherAmount,
-        gasLimit: `0x${(buyAmount * 200000).toString(16)}`,
+        gasLimit: buyAmount * 200000,
       })
 
       txHash = transaction.hash
@@ -162,7 +172,7 @@ function MintSection() {
       const purchasedIds = txReceipt.logs
         .map((log) => unstableAnimals.interface.parseLog(log))
         .filter((log) => log?.name === 'Transfer')
-        .map((log) => log.args.tokenId.toNumber())
+        .map((log) => toNumber(log.args.tokenId))
 
       setLastPurchasedIds(purchasedIds)
       setHasMintedUnstableAnimals(true)
@@ -193,8 +203,8 @@ function MintSection() {
     }
   }
 
-  const formattedEthAmount = buyPrice?.wei
-    ? `${utils.formatEther(buyPrice.wei.mul(buyAmount))} ETH`
+  const formattedEthAmount = buyPrice?.wei !== undefined
+    ? `${formatEther(buyPrice.wei * BigInt(buyAmount))} ETH`
     : undefined
 
   function getMintButton() {
