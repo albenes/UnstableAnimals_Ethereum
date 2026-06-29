@@ -271,6 +271,14 @@
 }
 
 
+.wallet-connect-row {
+  margin-bottom: 12px;
+}
+
+.connect-wallet-btn {
+  width: min(50vw, 320px) !important;
+}
+
 .mint-content-right img {
   width: 350px;
   border-radius: 50%;
