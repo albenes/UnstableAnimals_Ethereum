@@ -1,4 +1,4 @@
-.shiba-portrait {
+.unstable-portrait {
     display: inline-block;
     position: relative;
     margin-right: 20px;
@@ -9,11 +9,11 @@
     transition: all 0.2s;
 }
 
-/*.shiba-portrait:not(:last-child) {*/
+/*.unstable-portrait:not(:last-child) {*/
 /*    margin-right: 20px;*/
 /*}*/
 
-.shiba-portrait .mystery {
+.unstable-portrait .mystery {
     opacity: 1;
 
     -webkit-transition: all 0.2s;
@@ -21,7 +21,7 @@
     transition: all 0.2s;
 }
 
-.shiba-portrait .purchased {
+.unstable-portrait .purchased {
     position: absolute;
     left: 0;
 
@@ -31,7 +31,7 @@
     transition-property: opacity, transform;
 }
 
-.shiba-portrait:hover > .complete {
+.unstable-portrait:hover > .complete {
     cursor: pointer;
     -webkit-transition: transform 0.2s;
     -moz-transition: transform 0.2s;
@@ -39,7 +39,7 @@
     transform: scale(1.15);
 }
 
-.shiba-portrait:active > .complete {
+.unstable-portrait:active > .complete {
     cursor: pointer;
     -webkit-transition: transform 0.05s;
     -moz-transition: transform 0.05s;
@@ -76,7 +76,7 @@
     transition-delay: 1s !important;
 }
 
-.shiba-portrait img {
+.unstable-portrait img {
     border-radius: 20px;
     width: 170px;
 
@@ -104,7 +104,7 @@
     transition-delay: 0s;
 }
 
-.shiba-portrait:hover > .show-link {
+.unstable-portrait:hover > .show-link {
     cursor: pointer;
     transition-delay: 0.15s;
     opacity: 1;

@@ -1,0 +1,25 @@
+.footer {
+  width: 100%;
+  padding: 0 30px;
+  max-width: 1318px;
+  padding-top: 30px;
+  display: block;
+  padding-bottom: 60px;
+}
+
+.footer .social {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  justify-content: center;
+}
+
+/* .footer .contract {
+  margin-left: auto;
+  text-align: center;
+  margin-top: 35px;
+}
+
+.footer .contract {
+  margin-left: auto;
+} */

@@ -28,7 +28,7 @@ export function createContractStateHook(contract, globalSwrOptions = {}) {
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data, error, isValidating, mutate } = useSWR(
-      [contract.address, stateVarName],
+      [contract.target, stateVarName],
       contractStateFetcher,
       Object.entries(swrOptions).length ? { ...globalSwrOptions, ...swrOptions } : globalSwrOptions
     )

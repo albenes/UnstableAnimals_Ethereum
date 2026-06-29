@@ -1,6 +1,6 @@
 .MintSection {
   text-align: left;
-  font-family: WorkSans;
+  font-family: Roboto Slab;
   max-width: min(70vw, 1100px);
   padding-top: 60px;
   margin-left: auto;
@@ -11,12 +11,27 @@
 
 .MintSection h1 {
   margin-top: 0;
-  font-family: Symtext;
+  font-family: Bowlby One;
   font-weight: normal;
+  color: #FF0DDF;
 }
 
-.MintSection p {
+.why-different{
+  color: #28FF0D;
+  font-size: 24px;
+  font-family: Bowlby One;
+}
+
+.mint-time{
+  color: #28FF0D;
+  font-size: 24px;
+  font-family: Bowlby One;
+}
+
+.MintSection{
+  color: whitesmoke;
   font-size: 18px;
+  font-family: Roboto Slab;
 }
 
 .mint-content-left {
@@ -30,22 +45,24 @@
 .mint-interface {
   text-align: left;
   margin-top: 35px;
+  color: whitesmoke;
+  font-family: Roboto Slab;
 }
 
-.shibas-minted-wrapper {}
+.unstables-minted-wrapper {}
 
-.shibas-minted {
-  font-family: 'Symtext';
+.unstables-minted {
+  font-family: 'Bowlby One';
   font-size: 22px;
   width: 400px;
   text-align: center;
 }
 
-.shiba-minted-count {
+.unstable-minted-count {
   display: inline-block;
 }
 
-.shiba-minted-count--flash {
+.unstable-minted-count--flash {
   animation: flash 1.5s;
 }
 
@@ -88,7 +105,7 @@
 .mint-interface button {
   cursor: pointer;
   vertical-align: top;
-  font-family: Symtext;
+  font-family: Bowlby One;
   /*width: auto;*/
   color:#ffffff;
   text-decoration:none;
@@ -183,7 +200,7 @@
   .mint-interface {
     text-align: center;
   }
-  .shibas-minted {
+  .unstables-minted {
     width: inherit;
   }
   .mint-interface button .mint-price {
@@ -198,30 +215,35 @@
   .mint-gallery {
     text-align: center;
   }
-  .view-my-shibas {
+  .view-my-UnstableAnimals {
     text-align: center;
   }
 }
 
 
 .mint-content-right img {
-  width: 300px;
+  width: 350px;
+  border-radius: 50%;
+  margin-left: 50px;
+  margin-top: 50px;
+  border: 4px solid #FF0DDF;
+  position: absolute;
 }
 
-.view-my-shibas {
+.view-my-UnstableAnimals {
   margin-top: 30px;
-  font-family: Symtext;
+  font-family: Bowlby One;
 }
 
-.view-my-shibas p {
+.view-my-UnstableAnimals p {
   font-size: 20px;
   margin-bottom: 0;
 }
 
-.view-my-shibas a {
+.view-my-UnstableAnimals a {
   cursor: pointer;
   vertical-align: top;
-  font-family: Symtext;
+  font-family: Bowlby One;
   /*width: auto;*/
   color:#ffffff;
   text-decoration:none;
@@ -245,7 +267,7 @@
   box-shadow: 0px 6px 0px #7861b3;
 }
 
-.view-my-shibas a:hover {
+.view-my-UnstableAnimals a:hover {
   border:solid 1px #b392ff;
   background:#b392ff;
   -webkit-box-shadow: 0px 6px 0px #836eb9;
@@ -253,7 +275,7 @@
   box-shadow: 0px 6px 0px #836eb9;
 }
 
-.view-my-shibas a:active {
+.view-my-UnstableAnimals a:active {
   -webkit-box-shadow: 0px 2px 0px #684B14 !important;
   -moz-box-shadow: 0px 2px 0px #684B14 !important;
   box-shadow: 0px 2px 0px #684B14 !important;
@@ -275,7 +297,13 @@
 .error-message {
   margin-top: 28px;
   font-weight: bold;
-  color: red;
+  color:indianred;
+}
+
+.confirmation-message {
+  margin-top: 32px;
+  font-weight: bold;
+  color: #00bd00;
 }
 
 .get-metamask-modal {

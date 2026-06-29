@@ -1,6 +1,6 @@
 .SplashHeader {
-    background-image: url("images/bg.gif");
-    background-size: cover;
+    background-image: url("images/collage_bg.png");
+    background-size: contain;
     background-position: center;
     background-attachment: fixed;
     height: 100vh;
@@ -9,38 +9,40 @@
     background-position-y: calc(2vh - 2vw);
 }
 
+
 .splash-spacer {
     height: calc(5vw + 10vh - 60px);
     max-height: 200px;
 }
 
-.shiba-wrap-away {
-    animation: away 71s ease-in-out infinite;
+.unstable-wrap-away {
+    /* animation: away 71s ease-in-out infinite; */
+    animation: vibrate-1 3s linear infinite;
 }
 
-.shiba-wrap-sway {
+/* .unstable-wrap-sway {
     animation: swaying 99s ease-in-out infinite;
     margin-left: 20px;
     animation-delay: -3s
 }
 
-.shiba-wrap-rotate {
+.unstable-wrap-rotate {
     transform-origin: 40% 50%;
     animation: rotating 55s ease-in-out infinite;
     animation-delay: -3s
 }
 
-.shiba-wrap-float {
+.unstable-wrap-float {
     animation: floating 17s ease-in-out infinite;
     animation-delay: -3s;
-}
+} */
 
-.shiba-inu {
+.unstable {
     height: 210px;
     width: 210px;
     transform: scale(1.2);
     transform-origin: 40% 50%;
-    animation: up-smash 30s cubic-bezier(.25,-0.21,0,1) infinite;
+    /* animation: up-smash 30s cubic-bezier(.25,-0.21,0,1) infinite; */
     animation-delay: 9s;
 }
 
@@ -52,53 +54,54 @@
 
 .button-1 {
     cursor: pointer;
-    font-family: Symtext;
+    font-family: Bowlby One;
     /*width: auto;*/
     color:#ffffff;
     text-decoration:none;
     font-size: 24px;
     border-radius:10px;
-    border:solid 1px #E8A627;
-    background:#E8A627;
+    border:solid 1px #28FF0D;
+    background:#28FF0D;
     text-align:center;
     padding:16px 18px 14px;
     display: inline-block;
     margin-top: 70px;
-
+    color: #FF0DDF;
     -webkit-transition: all 0.15s;
     -moz-transition: all 0.15s;
     transition: all 0.15s;
 
-    -webkit-box-shadow: 0px 6px 0px #684B14;
-    -moz-box-shadow: 0px 6px 0px #684B14;
-    box-shadow: 0px 6px 0px #684B14;
+    -webkit-box-shadow: 0px 6px 0px #FF0DDF;
+    -moz-box-shadow: 0px 6px 0px #FF0DDF;
+    box-shadow: 0px 6px 0px #FF0DDF;
 }
 
 .button-1:active {
-    -webkit-box-shadow: 0px 2px 0px #674c1b !important;
-    -moz-box-shadow: 0px 2px 0px #674c1b !important;
-    box-shadow: 0px 2px 0px #674c1b !important;
+    -webkit-box-shadow: 0px 2px 0px #28FF0D !important;
+    -moz-box-shadow: 0px 2px 0px #28FF0D !important;
+    box-shadow: 0px 2px 0px #28FF0D !important;
     margin-top: 74px;
     margin-bottom: -4px;
 }
 
 .button-1:hover {
-    border:solid 1px #edb045;
-    background: #edb045;
-    -webkit-box-shadow: 0px 6px 0px #674c1b;
-    -moz-box-shadow: 0px 6px 0px #674c1b;
-    box-shadow: 0px 6px 0px #674c1b;
+    border:solid 1px #FF0DDF;
+    background: #FF0DDF;
+    -webkit-box-shadow: 0px 6px 0px #28FF0D;
+    -moz-box-shadow: 0px 6px 0px #28FF0D;
+    box-shadow: 0px 6px 0px #28FF0D;
+    color: #28FF0D;
 }
 
 .button-2 {
-    font-family: Symtext;
+    font-family: Bowlby One;
     /*width: auto;*/
     color:#ffffff;
     text-decoration:none;
     font-size: 24px;
     border-radius:10px;
-    border:solid 1px #604FB5;
-    background:#604FB5;
+    border:solid 1px #7843E6;
+    background:#7843E6;
     text-align:center;
     padding:16px 18px 14px;
     display: inline-block;
@@ -108,36 +111,40 @@
     -moz-transition: all 0.15s;
     transition: all 0.15s;
 
-    -webkit-box-shadow: 0px 6px 0px #2E216D;
-    -moz-box-shadow: 0px 6px 0px #2E216D;
-    box-shadow: 0px 6px 0px #2E216D;
+    -webkit-box-shadow: 0px 6px 0px #43AAE6;
+    -moz-box-shadow: 0px 6px 0px #43AAE6;
+    box-shadow: 0px 6px 0px #43AAE6;
 }
 
 .button-2:active{
-    -webkit-box-shadow: 0px 2px 0px #2E216D !important;
-    -moz-box-shadow: 0px 2px 0px #2E216D !important;
-    box-shadow: 0px 2px 0px #2E216D !important;
+    -webkit-box-shadow: 0px 2px 0px #7843E6 !important;
+    -moz-box-shadow: 0px 2px 0px #7843E6 !important;
+    box-shadow: 0px 2px 0px #7843E6 !important;
     margin-top: 44px;
     margin-bottom: -4px;
 }
 
 .button-2:hover {
-    border:solid 1px #6c5ac3;
-    background: #6c5ac3;
-    -webkit-box-shadow: 0px 6px 0px #423486;
-    -moz-box-shadow: 0px 6px 0px #423486;
-    box-shadow: 0px 6px 0px #423486;
+    border:solid 1px #43AAE6;
+    background: #43AAE6;
+    -webkit-box-shadow: 0px 6px 0px #7843E6;
+    -moz-box-shadow: 0px 6px 0px #7843E6;
+    box-shadow: 0px 6px 0px #7843E6;
 }
 
 .social-icons {
-    margin-top: calc(5vh + 53px)
+    margin-top: calc(5vh + 53px);
 }
 
 .social-icon svg:hover path {
-    fill: #ffa500;
+    fill: #28FF0D;
 }
 
-.social-icon {
+.social-icon svg path {
+    fill: #FF0DDF;
+}
+
+.social-icon{
     margin-right: min(3vw, 22px);
     margin-left: min(3vw, 22px);
 }
@@ -197,4 +204,58 @@
     100% {
         transform: rotate(-360deg) scale(1.2);
     }
+}
+
+@keyframes vibrate-1 {
+    0% {
+      -webkit-transform: translate(0);
+              transform: translate(0);
+    }
+    20% {
+      -webkit-transform: translate(-2px, 2px);
+              transform: translate(-2px, 2px);
+    }
+    40% {
+      -webkit-transform: translate(-2px, -2px);
+              transform: translate(-2px, -2px);
+    }
+    60% {
+      -webkit-transform: translate(2px, 2px);
+              transform: translate(2px, 2px);
+    }
+    80% {
+      -webkit-transform: translate(2px, -2px);
+              transform: translate(2px, -2px);
+    }
+    100% {
+      -webkit-transform: translate(0);
+              transform: translate(0);
+    }
+}
+
+@keyframes vibrate-1 {
+        0% {
+        -webkit-transform: translate(0);
+                transform: translate(0);
+        }
+        20% {
+        -webkit-transform: translate(-2px, 2px);
+                transform: translate(-2px, 2px);
+        }
+        40% {
+        -webkit-transform: translate(-2px, -2px);
+                transform: translate(-2px, -2px);
+        }
+        60% {
+        -webkit-transform: translate(2px, 2px);
+                transform: translate(2px, 2px);
+        }
+        80% {
+        -webkit-transform: translate(2px, -2px);
+                transform: translate(2px, -2px);
+        }
+        100% {
+        -webkit-transform: translate(0);
+                transform: translate(0);
+        }
 }

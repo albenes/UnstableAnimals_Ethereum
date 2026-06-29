@@ -1,4 +1,4 @@
-import ShibaPortrait from './ShibaPortrait'
+import UnstablePortrait from './UnstablePortrait'
 import './MintGallery.css'
 
 function MintGallery({ buyAmount, purchasedIds, appState, contractAddress }) {
@@ -7,7 +7,7 @@ function MintGallery({ buyAmount, purchasedIds, appState, contractAddress }) {
         const nftId = purchasedIds ? purchasedIds[i] : null
         const isBlank = i >= buyAmount
         portraits.push(
-          <ShibaPortrait
+          <UnstablePortrait
             key={`portrait-${i}`}
             nftId={nftId}
             appState={appState}

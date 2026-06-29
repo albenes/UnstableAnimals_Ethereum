@@ -1,21 +1,26 @@
 const hre = require("hardhat");
 
 async function main() {
-  const SpaceShibas = await hre.ethers.getContractFactory("SpaceShibas");
-  const spaceShibas = await SpaceShibas.deploy(
+  const UnstableAnimals = await hre.ethers.getContractFactory("UnstableAnimals");
+  const unstableAnimals = await UnstableAnimals.deploy(
     "Unstable Animals",
-    "UA",
-    "ipfs://QmYcsZAmYo19UNzZa1knTb8JahT2ymgvyTYszvtzieYerK"
+    "UNSTBL",
+    "https://parallelworlds.mypinata.cloud/ipfs/QmQDWG92prsc64fPoeVtKrSZhR3RM2PCaCBCJLdH7A1vaK/"
   );
 
-  await spaceShibas.waitForDeployment();
+  const [deployer] = await hre.ethers.getSigners();
+  console.log("Deploying contracts with the account:", deployer.address);
 
-  console.log("Unstable Animals (SpaceShibas) deployed to:", await spaceShibas.getAddress());
+  console.log("Account balance:", (await hre.ethers.provider.getBalance(deployer.address)).toString());
+
+  await unstableAnimals.waitForDeployment();
+
+  console.log("UnstableAnimals deployed to:", await unstableAnimals.getAddress());
 }
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
     process.exit(1);
   });

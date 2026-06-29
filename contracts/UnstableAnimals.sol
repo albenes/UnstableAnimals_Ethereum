@@ -1,5 +1,4 @@
-// File: @openzeppelin/contracts/utils/introspection/IERC165.sol
-
+// import "@openzeppelin/contracts/utils/introspection/IERC165.sol
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
@@ -25,11 +24,7 @@ interface IERC165 {
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/IERC721.sol
-
-
-pragma solidity ^0.8.0;
-
+// import "@openzeppelin/contracts/token/ERC721/IERC721.sol
 
 /**
  * @dev Required interface of an ERC721 compliant contract.
@@ -155,10 +150,7 @@ interface IERC721 is IERC165 {
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
 }
 
-// File: @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol
-
-
-pragma solidity ^0.8.0;
+// import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol
 
 /**
  * @title ERC721 token receiver interface
@@ -178,11 +170,7 @@ interface IERC721Receiver {
     function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) external returns (bytes4);
 }
 
-// File: @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol
-
-
-pragma solidity ^0.8.0;
-
+// import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol
 
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
@@ -206,10 +194,7 @@ interface IERC721Metadata is IERC721 {
     function tokenURI(uint256 tokenId) external view returns (string memory);
 }
 
-// File: @openzeppelin/contracts/utils/Address.sol
-
-
-pragma solidity ^0.8.0;
+// import "@openzeppelin/contracts/utils/Address.sol
 
 /**
  * @dev Collection of functions related to the address type
@@ -397,10 +382,7 @@ library Address {
     }
 }
 
-// File: @openzeppelin/contracts/utils/Context.sol
-
-
-pragma solidity ^0.8.0;
+// import "@openzeppelin/contracts/utils/Context.sol
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -423,10 +405,7 @@ abstract contract Context {
     }
 }
 
-// File: @openzeppelin/contracts/utils/Strings.sol
-
-
-pragma solidity ^0.8.0;
+// import "@openzeppelin/contracts/utils/Strings.sol
 
 /**
  * @dev String operations.
@@ -492,11 +471,7 @@ library Strings {
 
 }
 
-// File: @openzeppelin/contracts/utils/introspection/ERC165.sol
-
-
-pragma solidity ^0.8.0;
-
+// import "@openzeppelin/contracts/utils/introspection/ERC165.sol
 
 /**
  * @dev Implementation of the {IERC165} interface.
@@ -521,17 +496,7 @@ abstract contract ERC165 is IERC165 {
     }
 }
 
-// File: @openzeppelin/contracts/token/ERC721/ERC721.sol
-
-
-pragma solidity ^0.8.0;
-
-
-
-
-
-
-
+// import "@openzeppelin/contracts/token/ERC721/ERC721.sol
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
@@ -898,9 +863,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
 }
 
-
-pragma solidity ^0.8.0;
-
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
  * @dev See https://eips.ethereum.org/EIPS/eip-721
@@ -923,9 +885,6 @@ interface IERC721Enumerable is IERC721 {
      */
     function tokenByIndex(uint256 index) external view returns (uint256);
 }
-
-
-pragma solidity ^0.8.0;
 
 /**
  * @dev This implements an optional extension of {ERC721} defined in the EIP that adds
@@ -1073,32 +1032,27 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
         _allTokens[tokenIndex] = lastTokenId; // Move the last token to the slot of the to-delete token
         _allTokensIndex[lastTokenId] = tokenIndex; // Update the moved token's index
-
         // This also deletes the contents at the last position of the array
         delete _allTokensIndex[tokenId];
         _allTokens.pop();
     }
 }
 
-// File: contracts/ThoughtsNFT.sol
-
-pragma solidity ^0.8.0;
-
-
-contract SpaceShibas is ERC721Enumerable {
+contract UnstableAnimals is ERC721Enumerable {
 
   address public immutable owner;
   uint256 public constant MAX_SUPPLY = 10000;
   uint256 public price = 1 ether / 20;
   bool public saleEnabled;
   uint256 private counter = 1;
-  uint256 public shibasMinted;
-  string private shibasURI; 
-  event ShibasBought(address buyer, uint256 shibasBought, uint256[10] shibaIndexes);
+  uint256 public UnstableAnimalsMinted;
+  string private UnstableAnimalsURI; 
+
+  event UnstableAnimalsBought(address buyer, uint256 UnstableAnimalsBought, uint256[10] UnstableAnimalsIndexes);
 
   constructor(string memory name, string memory symbol, string memory uri) ERC721(name, symbol) {
     owner = msg.sender;  
-    shibasURI = uri;
+    UnstableAnimalsURI = uri;
   }
 
   function baseURI() public view returns (string memory) {
@@ -1106,12 +1060,12 @@ contract SpaceShibas is ERC721Enumerable {
   }
   
   function _baseURI() internal view override returns (string memory) {
-    return shibasURI;
+    return UnstableAnimalsURI;
   }
 
-  function mintBunch(uint256[] memory toMint) public {
-    require(msg.sender == owner, "Only owner can mint before sale");
-    shibasMinted += toMint.length;
+  function mintUnstableAnimalsGroup(uint256[] memory toMint) public {
+    require(msg.sender == owner, "Used for giveaways and promotion purposes by Owner");
+    UnstableAnimalsMinted += toMint.length;
     for (uint256 i = 0; i < toMint.length; i++) {
       require(toMint[i] != 0 && toMint[i] <= MAX_SUPPLY, "Invalid tokenId");
       _mint(msg.sender, toMint[i]); 
@@ -1128,21 +1082,21 @@ contract SpaceShibas is ERC721Enumerable {
     uint256 i = counter;
 
     while (tokensToMint < amountToBuy) {
-      if (counter > MAX_SUPPLY) {
+        if (!_exists(i)) {
+        tokenIdsToMint[tokensToMint] = i;
+        tokensToMint++;
+      }
+      counter = ++i;
+      if (i > MAX_SUPPLY) {
         saleEnabled = false;
         payable(msg.sender).transfer((amountToBuy - tokensToMint) * price);
         break;
       }
-      if (!_exists(i)) {
-        tokenIdsToMint[tokensToMint] = i;
-        tokensToMint++;
-      }
-      counter = i++;
     }
 
-    emit ShibasBought(msg.sender, tokensToMint, tokenIdsToMint);
+    emit UnstableAnimalsBought(msg.sender, tokensToMint, tokenIdsToMint);
+    UnstableAnimalsMinted += tokensToMint;
 
-    shibasMinted += tokensToMint;
     for (uint256 j = 0; j < tokensToMint; j++) {
       _mint(msg.sender, tokenIdsToMint[j]); 
     }
@@ -1167,6 +1121,6 @@ contract SpaceShibas is ERC721Enumerable {
     require(msg.sender == owner, "Only owner can set prices");
     price = to;
   }
-
-
 }
+
+// Based on Spaceshibas smart contract

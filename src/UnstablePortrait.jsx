@@ -1,15 +1,16 @@
-import mysteryShiba from './images/mystery.png'
+import mysteryUnstable from './images/mystery.png'
 import {useEffect, useState} from "react";
 import {APP_STATE} from "./MintSection";
 import loadingSpinner from './images/loading-image.gif'
-import './ShibaPortrait.css'
+import './UnstablePortrait.css'
 
-const BASE_URI = 'https://spaceshibas.mypinata.cloud/ipfs/QmUMJ8KCcrLFsY8946qcq7U6jiwVHhML4ydQB1uc1n52sn'
-// const BASE_URI = 'https://ipfs.io/ipfs/QmUMJ8KCcrLFsY8946qcq7U6jiwVHhML4ydQB1uc1n52sn'
+import { METADATA_BASE_URI } from './config/contract'
+
+const BASE_URI = METADATA_BASE_URI
 const TRANSPARENT = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 const OPENSEA_URI_PREFIX = 'https://opensea.io/assets'
 
-function ShibaPortrait({ id, nftId, appState, isBlank, contractAddress }) {
+function UnstablePortrait({ id, nftId, appState, isBlank, contractAddress }) {
   const [imagesPreloaded, setImagesPreloaded] = useState({})
 
   useEffect(() => {
@@ -27,6 +28,8 @@ function ShibaPortrait({ id, nftId, appState, isBlank, contractAddress }) {
     mysteryClassName = 'mystery'
   }
 
+
+  // aqui necesito que el nombre de las imagenes esten de 1 a 10000
   const purchasedSrc = nftId ? `${BASE_URI}/${nftId}.png` : TRANSPARENT
   if (nftId && !imagesPreloaded[nftId] && appState !== APP_STATE.readyToMint) {
     const image = new Image()
@@ -63,14 +66,14 @@ function ShibaPortrait({ id, nftId, appState, isBlank, contractAddress }) {
   }
 
   return <div
-    className='shiba-portrait'
+    className='Unstable-portrait'
     onClick={onClick}
   >
-    <img id={id} className={mysteryClassName} src={mysteryShiba}/>
+    <img id={id} className={mysteryClassName} src={mysteryUnstable}/>
     {appState !== APP_STATE.readyToMint && <img className={loadingClassName} src={loadingSpinner}/>}
     <img className={purchasedClassName} src={purchasedSrc} />
     <div className={openseaClassName}>VIEW ON OPENSEA</div>
   </div>
 }
 
-export default ShibaPortrait
+export default UnstablePortrait

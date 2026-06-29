@@ -1,6 +1,6 @@
 import { BrowserProvider, JsonRpcProvider } from 'ethers';
+import { CHAIN_ID } from './config/contract';
 
-const MAINNET_CHAIN_ID = 1;
 const MAINNET_RPC = 'https://eth.llamarpc.com';
 
 export function hasWallet() {
@@ -17,7 +17,7 @@ export function resolveProvider() {
   }
 
   if (typeof window !== 'undefined') {
-    return new JsonRpcProvider(MAINNET_RPC, MAINNET_CHAIN_ID);
+    return new JsonRpcProvider(MAINNET_RPC, CHAIN_ID);
   }
 
   return undefined;
