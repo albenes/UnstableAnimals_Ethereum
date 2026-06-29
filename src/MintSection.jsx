@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react'
-import { utils } from 'ethers'
+import { useEffect, useRef, useState } from 'react'
+import { formatEther } from 'ethers'
 import Modal from 'react-modal'
 import AnimateOnChange from 'react-animate-on-change'
 import scientist from './images/scientist-animated.gif'
@@ -8,7 +8,7 @@ import MetaMaskLogo from './images/mm-logo.svg?react'
 import './MintSection.css'
 import './pixelLoader.css'
 import { createContractStateHook } from "./createContractStateHook";
-import { resolveProvider } from "./resolveProvider";
+import { hasWallet, resolveProvider } from "./resolveProvider";
 import { createContractHelper } from "./createContractHelper";
 import SpaceShibas from './artifacts/contracts/SpaceShibas.sol/SpaceShibas.json'
 import MintGallery from "./MintGallery";
@@ -16,13 +16,14 @@ import {useSmoothScrollTo} from "./useSmoothScrollTo";
 import {useLocalStorage} from './useLocalStorage'
 import {usePrevious} from "./usePrevious";
 
-const SPACE_SHIBAS_ADDRESS = '0xeF81c2C98cb9718003A89908e6bd1a5fA8A098A3'
+// Deployed mainnet contract — do not change without a redeployment
+const CONTRACT_ADDRESS = '0xeF81c2C98cb9718003A89908e6bd1a5fA8A098A3'
 const CHAIN_ID = '0x1'
 // On-chain collection slug for OpenSea profile links (must match deployed contract listing)
 export const OPENSEA_NAME = 'spaceshibas'
 
 const provider = resolveProvider()
-const spaceShibas = createContractHelper(SPACE_SHIBAS_ADDRESS, SpaceShibas.abi, provider)
+const spaceShibas = createContractHelper(CONTRACT_ADDRESS, SpaceShibas.abi, provider, hasWallet())
 const useSpaceShibasState = createContractStateHook(spaceShibas.reader)
 
 export const APP_STATE = {
@@ -32,15 +33,12 @@ export const APP_STATE = {
   soldOut: 'SOLD_OUT',
 }
 
-// Reload on chain change
-if (window.ethereum) {
-  window.ethereum.on('chainChanged', (_chainId) => window.location.reload())
+if (typeof window !== 'undefined' && window.ethereum) {
+  window.ethereum.on('chainChanged', () => window.location.reload())
 }
 
-function wait(ms) {
-  return new Promise(function(resolve) {
-    setTimeout(resolve, ms);
-  })
+function toNumber(value) {
+  return typeof value === 'bigint' ? Number(value) : value
 }
 
 function MintSection() {
@@ -67,29 +65,26 @@ function MintSection() {
 
   const [buyPrice] = useSpaceShibasState({
     stateVarName: 'price',
-    initialData: utils.parseUnits('0'),
+    initialData: 0n,
     transformData: (data) => ({
       wei: data,
-      number: utils.formatEther(data)
+      number: formatEther(data)
     })
   })
 
   const [isSaleActive, _, __, refreshIsSaleActive] = useSpaceShibasState('saleEnabled', true)
   const [shibasMinted, ___, ____, refreshShibasMinted] = useSpaceShibasState({
     stateVarName: 'shibasMinted',
-    transformData: (data) => data.toNumber(),
+    transformData: toNumber,
     swrOptions: { refreshInterval: 6000 },
   })
   const [maxShibaCount] = useSpaceShibasState({
-    initialData: utils.parseUnits('10000', 'wei'),
+    initialData: 10000n,
     stateVarName: 'MAX_SUPPLY',
-    transformData: (data) => data.toNumber(),
+    transformData: toNumber,
   })
 
-  let allSold = maxShibaCount === shibasMinted
-  if (!window.ethereum) {
-    allSold = false
-  }
+  const allSold = maxShibaCount === shibasMinted
 
   const shibasMintedPrevious = usePrevious(shibasMinted)
   useEffect(() => {
@@ -131,30 +126,28 @@ function MintSection() {
       setModalOpen(true)
       return
     }
-    if (!buyAmount || !parseInt(buyAmount || !buyPrice.wei)) return
-    const etherAmount = buyPrice.wei.mul(buyAmount)
+    if (!buyAmount || !parseInt(buyAmount) || buyPrice?.wei === undefined) return
+    const etherAmount = buyPrice.wei * BigInt(buyAmount)
     await requestAccount()
     let txHash
     try {
-      // throw Error('Fake error pre-tx.')
-      const transaction = await spaceShibas.signer.buy(
+      const signerContract = await spaceShibas.getSignerContract()
+      const transaction = await signerContract.buy(
         buyAmount, {
           value: etherAmount,
-          gasLimit: `0x${(buyAmount * 180000).toString(16)}`
+          gasLimit: buyAmount * 180000,
         }
       )
       txHash = transaction.hash
-      // throw Error('Fake error post-tx.')
       setAppState(APP_STATE.waitingForTx)
       setLastPurchasedShibaIds([])
-      // await wait(5000)
       await transaction.wait()
       setAppState(APP_STATE.txSuccess)
       const txReceipt = await provider.getTransactionReceipt(transaction.hash)
       const purchasedIds = txReceipt.logs
         .map((log) => spaceShibas.interface.parseLog(log))
-        .filter((log) => log.name === 'Transfer')
-        .map((log) => log.args.tokenId.toNumber())
+        .filter((log) => log?.name === 'Transfer')
+        .map((log) => toNumber(log.args.tokenId))
       setLastPurchasedShibaIds(purchasedIds)
       setHasMintedUnstableAnimals(true)
       await refreshShibasMinted()
@@ -180,7 +173,9 @@ function MintSection() {
 
   }
 
-  const formattedEthAmount = provider ? `${utils.formatEther(buyPrice.wei.mul(buyAmount))} ETH` : undefined
+  const formattedEthAmount = buyPrice?.wei !== undefined
+    ? `${formatEther(buyPrice.wei * BigInt(buyAmount))} ETH`
+    : undefined
 
   function getMintButton() {
     switch (appState) {
@@ -311,7 +306,7 @@ function MintSection() {
         buyAmount={buyAmount}
         purchasedIds={lastPurchasedShibaIds}
         appState={appState}
-        contractAddress={SPACE_SHIBAS_ADDRESS}
+        contractAddress={CONTRACT_ADDRESS}
       />}
 
       <div

@@ -1,8 +1,9 @@
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
 describe("SpaceShibas", function () {
   const URI = "ipfs://QmYcsZAmYo19UNzZa1knTb8JahT2ymgvyTYszvtzieYerK";
-  const price = ethers.utils.parseEther("0.05");
+  const price = ethers.parseEther("0.05");
 
   let spaceShibas;
   let owner;
@@ -12,7 +13,7 @@ describe("SpaceShibas", function () {
     [owner, buyer] = await ethers.getSigners();
     const SpaceShibas = await ethers.getContractFactory("SpaceShibas");
     spaceShibas = await SpaceShibas.deploy("Unstable Animals", "UA", URI);
-    await spaceShibas.deployed();
+    await spaceShibas.waitForDeployment();
   });
 
   it("sets the deployer as owner", async function () {
@@ -26,7 +27,7 @@ describe("SpaceShibas", function () {
   describe("mintBunch", function () {
     it("allows the owner to mint specific token ids", async function () {
       await spaceShibas.mintBunch([1, 2, 3]);
-      expect(await spaceShibas.shibasMinted()).to.equal(3);
+      expect(await spaceShibas.shibasMinted()).to.equal(3n);
       expect(await spaceShibas.ownerOf(1)).to.equal(owner.address);
       expect(await spaceShibas.ownerOf(2)).to.equal(owner.address);
       expect(await spaceShibas.ownerOf(3)).to.equal(owner.address);
@@ -50,8 +51,8 @@ describe("SpaceShibas", function () {
     });
 
     it("mints tokens when sale is enabled and payment is correct", async function () {
-      await spaceShibas.connect(buyer).buy(2, { value: price.mul(2) });
-      expect(await spaceShibas.shibasMinted()).to.equal(2);
+      await spaceShibas.connect(buyer).buy(2, { value: price * 2n });
+      expect(await spaceShibas.shibasMinted()).to.equal(2n);
       expect(await spaceShibas.ownerOf(1)).to.equal(buyer.address);
       expect(await spaceShibas.ownerOf(2)).to.equal(buyer.address);
     });
@@ -65,7 +66,7 @@ describe("SpaceShibas", function () {
 
     it("reverts when payment is incorrect", async function () {
       await expect(
-        spaceShibas.connect(buyer).buy(1, { value: price.div(2) })
+        spaceShibas.connect(buyer).buy(1, { value: price / 2n })
       ).to.be.revertedWith("Invalid amount of ether for amount to buy");
     });
 
@@ -74,7 +75,7 @@ describe("SpaceShibas", function () {
         spaceShibas.connect(buyer).buy(0, { value: 0 })
       ).to.be.revertedWith("Invalid amount");
       await expect(
-        spaceShibas.connect(buyer).buy(11, { value: price.mul(11) })
+        spaceShibas.connect(buyer).buy(11, { value: price * 11n })
       ).to.be.revertedWith("Invalid amount");
     });
   });
@@ -88,7 +89,7 @@ describe("SpaceShibas", function () {
     });
 
     it("allows the owner to update price and counter", async function () {
-      const newPrice = ethers.utils.parseEther("0.1");
+      const newPrice = ethers.parseEther("0.1");
       await spaceShibas.setPrice(newPrice);
       expect(await spaceShibas.price()).to.equal(newPrice);
 
@@ -102,9 +103,10 @@ describe("SpaceShibas", function () {
       await spaceShibas.setSaleEnabled(true);
       await spaceShibas.connect(buyer).buy(1, { value: price });
 
-      expect(await ethers.provider.getBalance(spaceShibas.address)).to.equal(price);
+      const contractAddress = await spaceShibas.getAddress();
+      expect(await ethers.provider.getBalance(contractAddress)).to.equal(price);
       await spaceShibas.withdraw();
-      expect(await ethers.provider.getBalance(spaceShibas.address)).to.equal(0);
+      expect(await ethers.provider.getBalance(contractAddress)).to.equal(0n);
     });
 
     it("reverts when a non-owner calls owner-only functions", async function () {

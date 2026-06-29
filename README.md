@@ -35,5 +35,5 @@ yarn test             # Vitest / React tests
 
 ## Stack
 
-- **Frontend:** React 18, Vite, ethers v5, SWR 2
+- **Frontend:** React 18, Vite, ethers v6, SWR 2
 - **Contracts:** Hardhat 2, Solidity 0.8.4
