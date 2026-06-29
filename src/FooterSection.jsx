@@ -1,10 +1,8 @@
 import './FooterSection.css'
-import { ReactComponent as TelegramIcon } from "./images/telegram.svg";
-import { ReactComponent as DiscordIcon } from "./images/discord.svg";
-import { ReactComponent as TwitterIcon } from "./images/twitter.svg";
-import { ReactComponent as GithubIcon } from "./images/github.svg";
-import { ReactComponent as OpenSeaIcon } from "./images/open-sea.svg";
-import { OPENSEA_NAME } from "./MintSection";
+import DiscordIcon from "./images/discord.svg?react";
+import TwitterIcon from "./images/twitter.svg?react";
+import OpenSeaIcon from "./images/open-sea.svg?react";
+import { OPENSEA_NAME } from "./config/contract";
 
 function FooterSection() {
 
