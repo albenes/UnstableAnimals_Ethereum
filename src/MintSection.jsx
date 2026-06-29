@@ -4,7 +4,7 @@ import Modal from 'react-modal'
 import AnimateOnChange from 'react-animate-on-change'
 import scientist from './images/scientist-animated.gif'
 import pixelParty from './images/pixel-party.png'
-import { ReactComponent as MetaMaskLogo } from './images/mm-logo.svg'
+import MetaMaskLogo from './images/mm-logo.svg?react'
 import './MintSection.css'
 import './pixelLoader.css'
 import { createContractStateHook } from "./createContractStateHook";
