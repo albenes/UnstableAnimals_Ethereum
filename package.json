@@ -2,6 +2,9 @@
   "name": "unstable-animals",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "homepage": ".",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -27,9 +30,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "hardhat compile",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "compile": "hardhat compile",
+    "test:contracts": "hardhat test",
     "deploy": "npx hardhat run scripts/deploy.js --network localhost"
   },
   "eslintConfig": {

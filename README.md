@@ -27,6 +27,9 @@ Ver [docs/PHASE0-AUDIT.md](docs/PHASE0-AUDIT.md) para el análisis completo y el
 ```bash
 yarn install
 yarn start
+yarn compile          # compila el contrato
+yarn test:contracts   # 13 tests Hardhat
+CI=true yarn test --watchAll=false   # test de React
 ```
 
 > El build de producción (`yarn build`) falla en Node 22 por `react-scripts@4`. Se resuelve en la Fase 2 (migración a Vite).
