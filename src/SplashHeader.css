@@ -53,27 +53,24 @@
 }
 
 .button-1 {
-    cursor: pointer;
-    font-family: Bowlby One;
-    /*width: auto;*/
-    color:#ffffff;
-    text-decoration:none;
-    font-size: 24px;
-    border-radius:10px;
-    border:solid 1px #28FF0D;
-    background:#28FF0D;
-    text-align:center;
-    padding:16px 18px 14px;
-    display: inline-block;
-    margin-top: 70px;
-    color: #FF0DDF;
-    -webkit-transition: all 0.15s;
-    -moz-transition: all 0.15s;
-    transition: all 0.15s;
-
-    -webkit-box-shadow: 0px 6px 0px #FF0DDF;
-    -moz-box-shadow: 0px 6px 0px #FF0DDF;
-    box-shadow: 0px 6px 0px #FF0DDF;
+  cursor: pointer;
+  font-family: Bowlby One;
+  color: #FF0DDF;
+  text-decoration: none;
+  font-size: 24px;
+  border-radius: 10px;
+  border: solid 1px #28FF0D;
+  background: #28FF0D;
+  text-align: center;
+  padding: 16px 18px 14px;
+  display: inline-block;
+  margin-top: 70px;
+  -webkit-transition: all 0.15s;
+  -moz-transition: all 0.15s;
+  transition: all 0.15s;
+  -webkit-box-shadow: 0px 6px 0px #FF0DDF;
+  -moz-box-shadow: 0px 6px 0px #FF0DDF;
+  box-shadow: 0px 6px 0px #FF0DDF;
 }
 
 .button-1:active {
@@ -258,4 +255,23 @@
         -webkit-transform: translate(0);
                 transform: translate(0);
         }
+}
+
+@media (max-width: 768px) {
+  .SplashHeader {
+    background-attachment: scroll;
+    min-height: auto;
+    padding-bottom: 40px;
+  }
+
+  .unstable {
+    height: 160px;
+    width: 160px;
+  }
+
+  .button-1,
+  .button-2 {
+    font-size: min(5vw, 20px);
+    margin-top: 40px;
+  }
 }

@@ -82,8 +82,7 @@
 
 h3 {
   font-family: Bowlby One;
-  font-size: 4rem;
-  /* line-height: 5rem; */
+  font-size: clamp(2rem, 8vw, 4rem);
   text-transform: uppercase;
   margin: 0 0 3;
   color: white;
@@ -91,3 +90,13 @@ h3 {
   margin-block-end: 0.5em;
 }
 
+@media (max-width: 600px) {
+  #team {
+    padding: 0 16px;
+  }
+
+  .member img {
+    width: 100%;
+    max-width: 300px;
+  }
+}

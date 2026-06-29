@@ -7,6 +7,7 @@
   margin-right: auto;
   padding-left: 170px;
   padding-bottom: 50px;
+  scroll-margin-top: 24px;
 }
 
 .MintSection h1 {
@@ -217,6 +218,55 @@
   }
   .view-my-UnstableAnimals {
     text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .MintSection {
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mint-content-left {
+    width: 100%;
+    max-width: none;
+  }
+
+  .MintSection h1 {
+    font-size: 1.5rem;
+  }
+
+  .mint-time {
+    font-size: 1.1rem;
+  }
+
+  .UnstableAnimals-minted {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .mint-interface input {
+    width: 56px;
+    min-width: 56px;
+    margin-right: 8px;
+  }
+
+  .mint-interface input:focus {
+    caret-color: auto;
+  }
+
+  .mint-interface button {
+    width: 100%;
+    max-width: 280px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .connect-wallet-hint {
+    font-size: 0.95rem;
+    opacity: 0.85;
   }
 }
 

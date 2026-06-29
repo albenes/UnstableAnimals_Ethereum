@@ -58,8 +58,35 @@ function MintSection() {
     false
   )
   const [showViewUnstableAnimals, setShowViewUnstableAnimals] = useState(false)
+  const [connectedAddress, setConnectedAddress] = useState(null)
 
   const loadedNoneMinted = useRef(hasMintedUnstableAnimals !== true)
+
+  async function refreshConnectedAddress() {
+    if (!provider || !hasWallet()) {
+      setConnectedAddress(null)
+      return
+    }
+    try {
+      const signer = await provider.getSigner()
+      setConnectedAddress(await signer.getAddress())
+    } catch {
+      setConnectedAddress(null)
+    }
+  }
+
+  useEffect(() => {
+    refreshConnectedAddress()
+    if (!window.ethereum) return undefined
+
+    const onAccountsChanged = () => {
+      refreshConnectedAddress()
+    }
+    window.ethereum.on('accountsChanged', onAccountsChanged)
+    return () => {
+      window.ethereum.removeListener('accountsChanged', onAccountsChanged)
+    }
+  }, [])
 
   function disableCountAnimation() {
     setShouldAnimateCount(false)
@@ -135,6 +162,7 @@ function MintSection() {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: CHAIN_ID_HEX }],
     })
+    await refreshConnectedAddress()
   }
 
   async function ensureMainnet() {
@@ -325,7 +353,7 @@ function MintSection() {
   const refToScroll = useSmoothScrollTo('#mint', 'scrollToMint')
 
   return (
-    <div ref={refToScroll} className="MintSection">
+    <div id="mint" ref={refToScroll} className="MintSection">
       <div className="mint-content-left">
         <h1>Find your Unstable Animals!</h1>
         <p>
@@ -388,20 +416,26 @@ function MintSection() {
         }
       >
         <p>View my Unstable Animals on:</p>
-        <a
-          href={`https://opensea.io/${window.ethereum?.selectedAddress}/${OPENSEA_NAME}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          OpenSea
-        </a>
-        <a
-          href={`https://rarible.com/user/${window.ethereum?.selectedAddress}?tab=owned`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Rarible
-        </a>
+        {connectedAddress ? (
+          <>
+            <a
+              href={`https://opensea.io/${connectedAddress}/${OPENSEA_NAME}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              OpenSea
+            </a>
+            <a
+              href={`https://rarible.com/user/${connectedAddress}?tab=owned`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Rarible
+            </a>
+          </>
+        ) : (
+          <p className="connect-wallet-hint">Connect your wallet to view your collection links.</p>
+        )}
       </div>
 
       <Modal
@@ -409,24 +443,26 @@ function MintSection() {
         onRequestClose={showModal(false)}
         className="get-metamask-modal"
         overlayClassName="get-metamask-modal-overlay"
-        contentLabel="Install MetaMask"
+        contentLabel="Connect a wallet"
       >
-        <button onClick={showModal(false)}>✕</button>
+        <button type="button" onClick={showModal(false)} aria-label="Close">
+          ✕
+        </button>
         <p>
-          You&apos;ll need to install MetaMask and refresh to continue.
+          Connect an Ethereum wallet to mint (MetaMask, Coinbase Wallet, Rabby, etc.).
           <br />
-          Mobile user:
+          Mobile users can open this site in your wallet&apos;s in-app browser:
         </p>
         <a
           href="https://metamask.app.link/dapp/www.unstableanimals.com"
           target="_blank"
           rel="noreferrer"
         >
-          Link this page with your app
+          Open in MetaMask
           <br />
         </a>
         <a href="https://metamask.io/download.html" target="_blank" rel="noreferrer">
-          Install Metamask
+          Get MetaMask
           <MetaMaskLogo />
         </a>
       </Modal>
