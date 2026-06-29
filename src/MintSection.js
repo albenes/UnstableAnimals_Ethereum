@@ -18,6 +18,7 @@ import {usePrevious} from "./usePrevious";
 
 const SPACE_SHIBAS_ADDRESS = '0xeF81c2C98cb9718003A89908e6bd1a5fA8A098A3'
 const CHAIN_ID = '0x1'
+// On-chain collection slug for OpenSea profile links (must match deployed contract listing)
 export const OPENSEA_NAME = 'spaceshibas'
 
 const provider = resolveProvider()
@@ -49,20 +50,20 @@ function MintSection() {
   const [modalIsOpen, setModalOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [shouldAnimateCount, setShouldAnimateCount] = useState(false)
-  const [hasMintedShibas, setHasMintedShibas] = useLocalStorage('hasMintedShibas', false)
-  const [showViewShibas, setShowViewShibas] = useState(false)
+  const [hasMintedUnstableAnimals, setHasMintedUnstableAnimals] = useLocalStorage('hasMintedUnstableAnimals', false)
+  const [showViewUnstableAnimals, setShowViewUnstableAnimals] = useState(false)
 
-  const loadedNoneMinted = useRef(hasMintedShibas !== true)
+  const loadedNoneMinted = useRef(hasMintedUnstableAnimals !== true)
 
   function disableCountAnimation() {
     setShouldAnimateCount(false)
   }
 
   useEffect(() => {
-    if (hasMintedShibas && loadedNoneMinted.current !== hasMintedShibas) {
-      setShowViewShibas(true)
+    if (hasMintedUnstableAnimals && loadedNoneMinted.current !== hasMintedUnstableAnimals) {
+      setShowViewUnstableAnimals(true)
     }
-  }, [hasMintedShibas, appState])
+  }, [hasMintedUnstableAnimals, appState])
 
   const [buyPrice] = useSpaceShibasState({
     stateVarName: 'price',
@@ -155,7 +156,7 @@ function MintSection() {
         .filter((log) => log.name === 'Transfer')
         .map((log) => log.args.tokenId.toNumber())
       setLastPurchasedShibaIds(purchasedIds)
-      setHasMintedShibas(true)
+      setHasMintedUnstableAnimals(true)
       await refreshShibasMinted()
     } catch (err) {
       refreshIsSaleActive()
@@ -279,8 +280,9 @@ function MintSection() {
   return (
     <div ref={refToScroll} className="MintSection">
       <div className="mint-content-left">
-        <h1>Find your Space Shibas!</h1>
-        <p>10,000 Space Shibas have wandered off and gotten lost in the vast expanse of the universe. Use the mint button to bring them back down to Earth! Each mint has enough capacity to beam down 10 Space Shibas at a time.</p>
+        <h1>Find your Unstable Animals!</h1>
+        <p>In our latest expedition to the parallel worlds, we found a breach in space. 10,000 unstable animals have crossed to our reality and now live on the Ethereum blockchain as ERC-721 tokens.</p>
+        <p>Each mint can stabilize up to 10 Unstable Animals at a time.</p>
         <div className="mint-interface">
           <div className='shibas-minted-wrapper'>
             {shibasMinted !== undefined && <div className='shibas-minted'>
@@ -291,7 +293,7 @@ function MintSection() {
                 onAnimationEnd={disableCountAnimation}
               >
                 {shibasMinted}
-              </AnimateOnChange> / 10,000 SHIBAS&nbsp;MINTED
+              </AnimateOnChange> / 10,000 Unstable Animals&nbsp;MINTED
             </div>}
           </div>
           {getMintInput()}
@@ -300,7 +302,7 @@ function MintSection() {
       </div>
 
       <div className="mint-content-right">
-        <img alt='Professor Shiba has no idea what he is doing' src={scientist} />
+        <img alt='An unstable animal researcher' src={scientist} />
       </div>
 
       {errorMessage && errorMessage}
@@ -313,10 +315,10 @@ function MintSection() {
       />}
 
       <div
-        disabled={!showViewShibas}
-        className={showViewShibas ? 'view-my-shibas' : 'view-my-shibas not-minted-yet'}
+        disabled={!showViewUnstableAnimals}
+        className={showViewUnstableAnimals ? 'view-my-shibas' : 'view-my-shibas not-minted-yet'}
       >
-        <p>View my shibas on:</p>
+        <p>View my Unstable Animals on:</p>
         <a
           href={`https://opensea.io/${window.ethereum?.selectedAddress}/${OPENSEA_NAME}`}
           target='_blank'
