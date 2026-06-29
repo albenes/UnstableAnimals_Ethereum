@@ -41,7 +41,7 @@ El `main` actual del repo es un clon de **Space Shibas** modernizado por error:
 | Fase | Trabajo |
 |------|---------|
 | **1** | Tests `UnstableAnimals.sol`, `.nvmrc`, scripts `compile`/`prebuild`, limpiar deps muertas | ✅ Hecha en `cursor/phase-1-fundamentals-eb02` |
-| **2** | Migrar CRA → Vite, React 18, CI |
+| **2** | Migrar CRA → Vite, React 18, CI | ✅ Hecha en `cursor/phase-2-toolchain-eb02` |
 | **3** | ethers v6, `JsonRpcProvider` read-only sin wallet |
 
 ### Deuda técnica menor (no bloqueante)
@@ -67,6 +67,7 @@ El `main` actual del repo es un clon de **Space Shibas** modernizado por error:
 ```bash
 yarn install
 yarn start
+yarn test:contracts
+yarn test
+yarn build
 ```
-
-> `yarn build` sigue fallando en Node 22 por `react-scripts@4` — se resuelve en Fase 2.

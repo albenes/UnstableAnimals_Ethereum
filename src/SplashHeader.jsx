@@ -1,9 +1,9 @@
 import './SplashHeader.css'
 import headlogo from './images/headlogo.png'
 import logo from './images/logo.png'
-import { ReactComponent as DiscordIcon } from "./images/discord.svg";
-import { ReactComponent as TwitterIcon } from "./images/twitter.svg";
-import { ReactComponent as OpenSeaIcon } from "./images/open-sea.svg";
+import DiscordIcon from "./images/discord.svg?react";
+import TwitterIcon from "./images/twitter.svg?react";
+import OpenSeaIcon from "./images/open-sea.svg?react";
 import { OPENSEA_NAME } from "./config/contract";
 
 function SplashHeader() {

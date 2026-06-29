@@ -5,60 +5,39 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "homepage": ".",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "chai": "^4.3.4",
-    "ethereum-waffle": "^3.4.0",
-    "hardhat": "^2.4.1",
-    "react": "^17.0.2",
+    "ethers": "^5.8.0",
+    "react": "^18.3.1",
     "react-animate-on-change": "^2.2.0",
-    "react-dom": "^17.0.2",
-    "react-modal": "^3.14.3",
-    "react-native-just-timeline": "0.0.2",
-    "react-native-vector-icons": "^8.1.0",
-    "react-scripts": "4.0.3",
-    "react-timeline-scribble": "^1.0.14",
-    "swr": "1.0.0-beta.7",
-    "web-vitals": "^1.0.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "prebuild": "hardhat compile",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "compile": "hardhat compile",
-    "test:contracts": "hardhat test",
-    "deploy": "npx hardhat run scripts/deploy.js --network localhost"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "react-dom": "^18.3.1",
+    "react-modal": "^3.16.3",
+    "swr": "^2.4.0",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.10",
-    "@openzeppelin/contracts": "^4.3.0",
-    "ethers": "^5.4.5"
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "chai": "^4.5.0",
+    "hardhat": "^2.28.6",
+    "jsdom": "^26.1.0",
+    "vite": "^6.3.5",
+    "vite-plugin-svgr": "^4.3.0",
+    "vitest": "^3.1.4"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "prebuild": "hardhat compile",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "compile": "hardhat compile",
+    "test:contracts": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js --network localhost"
   }
 }
