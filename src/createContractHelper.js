@@ -1,15 +1,22 @@
-import { ethers } from "ethers";
+import { Contract } from 'ethers';
 
-export function createContractHelper(address, abi, provider) {
+export function createContractHelper(address, abi, provider, web3Enabled = false) {
   if (!provider) {
-    return { web3Enabled: false }
+    return { web3Enabled: false };
   }
-  const signer = provider.getSigner()
-  const contractHelper = {
-    web3Enabled: true,
-    reader: new ethers.Contract(address, abi, provider),
-    signer: new ethers.Contract(address, abi, signer),
-  }
-  contractHelper.interface = contractHelper.reader.interface
-  return contractHelper
+
+  const reader = new Contract(address, abi, provider);
+
+  return {
+    web3Enabled,
+    reader,
+    address,
+    abi,
+    provider,
+    interface: reader.interface,
+    async getSignerContract() {
+      const signer = await provider.getSigner();
+      return new Contract(address, abi, signer);
+    },
+  };
 }
