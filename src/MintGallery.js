@@ -17,7 +17,7 @@ function MintGallery({ buyAmount, purchasedIds, appState, contractAddress }) {
         )
     }
 
-    return <div className='mint-gallery'></div>
+    return <div className='mint-gallery'>{portraits}</div>
 }
 
 export default MintGallery
