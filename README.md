@@ -26,6 +26,7 @@ Constantes centralizadas en `src/config/contract.js`.
 Requiere Node.js 18+ (ver `.nvmrc`).
 
 ```bash
+cp .env.example .env   # opcional: WalletConnect project ID
 yarn install
 yarn start              # Vite dev server
 yarn compile            # compila el contrato
@@ -33,5 +34,15 @@ yarn test:contracts     # 13 tests Hardhat
 yarn test               # tests de React (Vitest)
 yarn build              # build de producción
 ```
+
+### WalletConnect (móvil)
+
+Para habilitar conexión por QR (Rainbow, Trust Wallet, etc.), crea un project ID en [cloud.reown.com](https://cloud.reown.com) y configura:
+
+```bash
+VITE_WALLETCONNECT_PROJECT_ID=tu_project_id
+```
+
+Sin esta variable, el sitio sigue funcionando con wallets inyectadas (MetaMask, Rabby, etc.).
 
 Ver [docs/PHASE0-AUDIT.md](docs/PHASE0-AUDIT.md) para el historial de modernización.

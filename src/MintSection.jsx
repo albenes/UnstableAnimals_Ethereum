@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { formatEther } from 'ethers'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Contract, formatEther } from 'ethers'
 import Modal from 'react-modal'
 import AnimateOnChange from 'react-animate-on-change'
 import UnstableGIF from './images/UnstableGIF.gif'
@@ -8,28 +8,20 @@ import MetaMaskLogo from './images/mm-logo.svg?react'
 import './MintSection.css'
 import './pixelLoader.css'
 import { createContractStateHook } from './createContractStateHook'
-import { hasWallet, resolveProvider } from './resolveProvider'
-import { createContractHelper } from './createContractHelper'
 import UnstableAnimals from './UnstableAnimals.json'
 import MintGallery from './MintGallery'
 import { useSmoothScrollTo } from './useSmoothScrollTo'
 import { useLocalStorage } from './useLocalStorage'
 import { usePrevious } from './usePrevious'
+import { useWalletConnection } from './wallet/WalletConnectionProvider'
+import { parsePurchasedTokenIds } from './utils/parseMintReceipt'
+import { switchToMainnet } from './utils/switchToMainnet'
+import { toNumber } from './utils/toNumber'
 import {
   CHAIN_ID,
-  CHAIN_ID_HEX,
   CONTRACT_ADDRESS,
   OPENSEA_NAME,
 } from './config/contract'
-
-const provider = resolveProvider()
-const unstableAnimals = createContractHelper(
-  CONTRACT_ADDRESS,
-  UnstableAnimals.abi,
-  provider,
-  hasWallet()
-)
-const useUnstableAnimalsState = createContractStateHook(unstableAnimals.reader)
 
 export const APP_STATE = {
   readyToMint: 'READY_TO_MINT',
@@ -42,11 +34,8 @@ if (typeof window !== 'undefined' && window.ethereum) {
   window.ethereum.on('chainChanged', () => window.location.reload())
 }
 
-function toNumber(value) {
-  return typeof value === 'bigint' ? Number(value) : value
-}
-
 function MintSection() {
+  const wallet = useWalletConnection()
   const [buyAmount, setBuyAmountValue] = useState(1)
   const [lastPurchasedIds, setLastPurchasedIds] = useState([])
   const [appState, setAppState] = useState(APP_STATE.readyToMint)
@@ -62,14 +51,28 @@ function MintSection() {
 
   const loadedNoneMinted = useRef(hasMintedUnstableAnimals !== true)
 
+  const readerContract = useMemo(() => {
+    if (!wallet.readProvider) return null
+    return new Contract(CONTRACT_ADDRESS, UnstableAnimals.abi, wallet.readProvider)
+  }, [wallet.readProvider])
+
+  const contractInterface = useMemo(
+    () => readerContract?.interface ?? new Contract(CONTRACT_ADDRESS, UnstableAnimals.abi).interface,
+    [readerContract]
+  )
+
+  const useUnstableAnimalsState = useMemo(
+    () => createContractStateHook(readerContract),
+    [readerContract]
+  )
+
   async function refreshConnectedAddress() {
-    if (!provider || !hasWallet()) {
+    if (!wallet.canTransact) {
       setConnectedAddress(null)
       return
     }
     try {
-      const signer = await provider.getSigner()
-      setConnectedAddress(await signer.getAddress())
+      setConnectedAddress(await wallet.getConnectedAddress())
     } catch {
       setConnectedAddress(null)
     }
@@ -77,7 +80,7 @@ function MintSection() {
 
   useEffect(() => {
     refreshConnectedAddress()
-    if (!window.ethereum) return undefined
+    if (wallet.appKitEnabled || !window.ethereum) return undefined
 
     const onAccountsChanged = () => {
       refreshConnectedAddress()
@@ -86,7 +89,7 @@ function MintSection() {
     return () => {
       window.ethereum.removeListener('accountsChanged', onAccountsChanged)
     }
-  }, [])
+  }, [wallet.canTransact, wallet.appKitEnabled])
 
   function disableCountAnimation() {
     setShouldAnimateCount(false)
@@ -157,16 +160,16 @@ function MintSection() {
   }
 
   async function requestAccount() {
-    await window.ethereum.request({ method: 'eth_requestAccounts' })
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: CHAIN_ID_HEX }],
-    })
+    await wallet.connect()
+    if (!wallet.appKitEnabled) {
+      await switchToMainnet()
+    }
     await refreshConnectedAddress()
   }
 
   async function ensureMainnet() {
-    const network = await provider.getNetwork()
+    const writeProvider = await wallet.getWriteProvider()
+    const network = await writeProvider.getNetwork()
     if (Number(network.chainId) !== CHAIN_ID) {
       throw new Error('Please use Ethereum Mainnet')
     }
@@ -184,38 +187,58 @@ function MintSection() {
   async function buyUnstableAnimals() {
     setErrorMessage(null)
 
-    if (!unstableAnimals.web3Enabled) {
-      setModalOpen(true)
+    if (!wallet.canTransact) {
+      if (wallet.appKitEnabled) {
+        wallet.openAppKit()
+      } else {
+        setModalOpen(true)
+      }
       return
     }
 
-    if (!buyAmount || !parseInt(buyAmount) || buyPrice?.wei === undefined) return
+    if (!buyAmount || !parseInt(buyAmount, 10) || buyPrice?.wei === undefined) return
 
     const etherAmount = buyPrice.wei * BigInt(buyAmount)
-    await requestAccount()
 
     let txHash
     try {
+      await requestAccount()
       await ensureMainnet()
 
-      const signerContract = await unstableAnimals.getSignerContract()
+      const writeProvider = await wallet.getWriteProvider()
+      const signer = await writeProvider.getSigner()
+      const signerContract = new Contract(CONTRACT_ADDRESS, UnstableAnimals.abi, signer)
+
+      let gasLimit
+      try {
+        const estimated = await signerContract.buy.estimateGas(buyAmount, { value: etherAmount })
+        gasLimit = (estimated * 120n) / 100n
+      } catch {
+        gasLimit = BigInt(buyAmount * 200000)
+      }
+
       const transaction = await signerContract.buy(buyAmount, {
         value: etherAmount,
-        gasLimit: buyAmount * 200000,
+        gasLimit,
       })
 
       txHash = transaction.hash
       setAppState(APP_STATE.waitingForTx)
       setLastPurchasedIds([])
 
-      await transaction.wait()
+      const txReceipt = await transaction.wait()
       setAppState(APP_STATE.txSuccess)
 
-      const txReceipt = await provider.getTransactionReceipt(transaction.hash)
-      const purchasedIds = txReceipt.logs
-        .map((log) => unstableAnimals.interface.parseLog(log))
-        .filter((log) => log?.name === 'Transfer')
-        .map((log) => toNumber(log.args.tokenId))
+      const purchasedIds = parsePurchasedTokenIds(txReceipt, contractInterface)
+
+      if (purchasedIds.length > 0 && purchasedIds.length < buyAmount) {
+        setErrorMessage(
+          <div className="confirmation-message">
+            Minted {purchasedIds.length} of {buyAmount} requested — remaining supply may be limited.
+            Excess ETH was refunded by the contract.
+          </div>
+        )
+      }
 
       setLastPurchasedIds(purchasedIds)
       setHasMintedUnstableAnimals(true)
@@ -227,13 +250,9 @@ function MintSection() {
       if (txHash) {
         setErrorMessage(
           <div className="error-message">
-            Transaction failed; you may have run out of gas. <br />
-            <a
-              href={`https://etherscan.io/tx/${txHash}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Click here to see what happened on Etherscan.
+            Transaction failed.{' '}
+            <a href={`https://etherscan.io/tx/${txHash}`} target="_blank" rel="noreferrer">
+              View on Etherscan
             </a>
           </div>
         )
@@ -246,15 +265,23 @@ function MintSection() {
     }
   }
 
-  const formattedEthAmount = buyPrice?.wei !== undefined
-    ? `${formatEther(buyPrice.wei * BigInt(buyAmount))} ETH`
-    : undefined
+  const formattedEthAmount =
+    buyPrice?.wei !== undefined
+      ? `${formatEther(buyPrice.wei * BigInt(buyAmount))} ETH`
+      : undefined
 
   function getMintButton() {
     switch (appState) {
       case APP_STATE.readyToMint:
+        if (!wallet.canTransact) {
+          return (
+            <button type="button" onClick={buyUnstableAnimals} className="connect-wallet-btn">
+              Connect wallet to mint
+            </button>
+          )
+        }
         return (
-          <button onClick={buyUnstableAnimals}>
+          <button type="button" onClick={buyUnstableAnimals}>
             <span
               className="mint-word"
               style={formattedEthAmount ? { float: 'left', marginLeft: 8 } : {}}
@@ -274,7 +301,7 @@ function MintSection() {
 
       case APP_STATE.txSuccess:
         return (
-          <button onClick={resetAppState}>
+          <button type="button" onClick={resetAppState}>
             <span className="mint-more">Mint more!</span>
           </button>
         )
@@ -311,14 +338,14 @@ function MintSection() {
               if (inputValue === '') {
                 return
               }
-              const inputValueInt = parseInt(inputValue)
-              if (isNaN(inputValue)) {
+              const inputValueInt = parseInt(inputValue, 10)
+              if (isNaN(inputValueInt)) {
                 return
               }
               if (inputValueInt > 10) {
-                let toSet = inputValue % 10
+                let toSet = inputValueInt % 10
                 toSet = toSet === 0 ? 10 : toSet
-                toSet = inputValue === 100 ? 10 : toSet
+                toSet = inputValueInt === 100 ? 10 : toSet
                 toSet = toSet < 1 ? 1 : toSet
                 setBuyAmountValue(toSet < 1 ? 1 : toSet)
                 return
@@ -326,7 +353,7 @@ function MintSection() {
               if (!e.target.validity.valid) {
                 return
               }
-              setBuyAmountValue(inputValue)
+              setBuyAmountValue(inputValueInt)
             }}
             value={buyAmount}
           />
@@ -372,6 +399,11 @@ function MintSection() {
         <p className="mint-time">Sale is ACTIVE! You can mint up to 10 at a time!</p>
 
         <div className="mint-interface">
+          {wallet.appKitEnabled && (
+            <div className="wallet-connect-row">
+              <appkit-button />
+            </div>
+          )}
           <div className="UnstableAnimals-minted-wrapper">
             {unstableAnimalsMinted !== undefined && (
               <div className="UnstableAnimals-minted">
@@ -408,7 +440,6 @@ function MintSection() {
       )}
 
       <div
-        disabled={!showViewUnstableAnimals}
         className={
           showViewUnstableAnimals
             ? 'view-my-UnstableAnimals'
@@ -438,34 +469,36 @@ function MintSection() {
         )}
       </div>
 
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={showModal(false)}
-        className="get-metamask-modal"
-        overlayClassName="get-metamask-modal-overlay"
-        contentLabel="Connect a wallet"
-      >
-        <button type="button" onClick={showModal(false)} aria-label="Close">
-          ✕
-        </button>
-        <p>
-          Connect an Ethereum wallet to mint (MetaMask, Coinbase Wallet, Rabby, etc.).
-          <br />
-          Mobile users can open this site in your wallet&apos;s in-app browser:
-        </p>
-        <a
-          href="https://metamask.app.link/dapp/www.unstableanimals.com"
-          target="_blank"
-          rel="noreferrer"
+      {!wallet.appKitEnabled && (
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={showModal(false)}
+          className="get-metamask-modal"
+          overlayClassName="get-metamask-modal-overlay"
+          contentLabel="Connect a wallet"
         >
-          Open in MetaMask
-          <br />
-        </a>
-        <a href="https://metamask.io/download.html" target="_blank" rel="noreferrer">
-          Get MetaMask
-          <MetaMaskLogo />
-        </a>
-      </Modal>
+          <button type="button" onClick={showModal(false)} aria-label="Close">
+            ✕
+          </button>
+          <p>
+            Connect an Ethereum wallet to mint (MetaMask, Coinbase Wallet, Rabby, etc.).
+            <br />
+            Mobile users can open this site in your wallet&apos;s in-app browser:
+          </p>
+          <a
+            href="https://metamask.app.link/dapp/www.unstableanimals.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open in MetaMask
+            <br />
+          </a>
+          <a href="https://metamask.io/download.html" target="_blank" rel="noreferrer">
+            Get MetaMask
+            <MetaMaskLogo />
+          </a>
+        </Modal>
+      )}
     </div>
   )
 }
