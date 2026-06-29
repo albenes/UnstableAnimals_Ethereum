@@ -131,6 +131,15 @@ body {
 
 /* Media queries - Responsive timeline on screens less than 600px wide */
 @media screen and (max-width: 600px) {
+  .unstablefloating {
+    width: min(100vw, 320px);
+    height: min(100vw, 320px);
+    left: -80px;
+    bottom: -20px;
+    background-size: contain;
+    opacity: 0.5;
+  }
+
 /* Place the timelime to the left */
   .timeline::after {
     left: 31px;
