@@ -42,7 +42,7 @@ El `main` actual del repo es un clon de **Space Shibas** modernizado por error:
 |------|---------|
 | **1** | Tests `UnstableAnimals.sol`, `.nvmrc`, scripts `compile`/`prebuild`, limpiar deps muertas | ✅ Hecha en `cursor/phase-1-fundamentals-eb02` |
 | **2** | Migrar CRA → Vite, React 18, CI | ✅ Hecha en `cursor/phase-2-toolchain-eb02` |
-| **3** | ethers v6, `JsonRpcProvider` read-only sin wallet |
+| **3** | ethers v6, `JsonRpcProvider` read-only sin wallet | ✅ Hecha en `cursor/phase-3-ethers-v6-eb02` |
 
 ### Deuda técnica menor (no bloqueante)
 
