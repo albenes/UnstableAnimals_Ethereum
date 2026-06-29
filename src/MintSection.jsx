@@ -80,7 +80,7 @@ function MintSection() {
     }),
   })
 
-  const [isSaleActive, _, __, refreshIsSaleActive] = useUnstableAnimalsState('saleEnabled', true)
+  const [isSaleActive, _, __, refreshIsSaleActive] = useUnstableAnimalsState('saleEnabled', false)
   const [unstableAnimalsMinted, ___, ____, refreshUnstableAnimalsMinted] = useUnstableAnimalsState({
     stateVarName: 'UnstableAnimalsMinted',
     transformData: toNumber,
@@ -92,10 +92,10 @@ function MintSection() {
     transformData: toNumber,
   })
 
-  let allSold = maxUnstableAnimalsCount === unstableAnimalsMinted
-  if (!window.ethereum) {
-    allSold = false
-  }
+  const allSold =
+    maxUnstableAnimalsCount !== undefined &&
+    unstableAnimalsMinted !== undefined &&
+    maxUnstableAnimalsCount === unstableAnimalsMinted
 
   const unstableAnimalsMintedPrevious = usePrevious(unstableAnimalsMinted)
   useEffect(() => {
@@ -109,10 +109,21 @@ function MintSection() {
   }, [unstableAnimalsMinted, unstableAnimalsMintedPrevious])
 
   useEffect(() => {
-    if (!isSaleActive || allSold) {
-      setAppState(APP_STATE.soldOut)
-    }
+    setAppState((current) => {
+      if (current === APP_STATE.waitingForTx || current === APP_STATE.txSuccess) {
+        return current
+      }
+      if (!isSaleActive || allSold) {
+        return APP_STATE.soldOut
+      }
+      if (current === APP_STATE.soldOut) {
+        return APP_STATE.readyToMint
+      }
+      return current
+    })
   }, [isSaleActive, allSold])
+
+  const soldOutLabel = allSold ? 'Sold out!' : 'Sale not started'
 
   function showModal(bool) {
     return () => setModalOpen(bool)
@@ -135,7 +146,11 @@ function MintSection() {
 
   function resetAppState() {
     loadedNoneMinted.current = false
-    setAppState(APP_STATE.readyToMint)
+    if (isSaleActive && !allSold) {
+      setAppState(APP_STATE.readyToMint)
+    } else {
+      setAppState(APP_STATE.soldOut)
+    }
   }
 
   async function buyUnstableAnimals() {
@@ -239,7 +254,7 @@ function MintSection() {
       case APP_STATE.soldOut:
         return (
           <button className="sold-out" disabled={true}>
-            <span className="mint-word">Sale not started</span>
+            <span className="mint-word">{soldOutLabel}</span>
           </button>
         )
 

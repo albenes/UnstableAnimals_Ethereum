@@ -49,20 +49,20 @@
   font-family: Roboto Slab;
 }
 
-.unstables-minted-wrapper {}
+.UnstableAnimals-minted-wrapper {}
 
-.unstables-minted {
+.UnstableAnimals-minted {
   font-family: 'Bowlby One';
   font-size: 22px;
   width: 400px;
   text-align: center;
 }
 
-.unstable-minted-count {
+.UnstableAnimals-minted-count {
   display: inline-block;
 }
 
-.unstable-minted-count--flash {
+.UnstableAnimals-minted-count--flash {
   animation: flash 1.5s;
 }
 
@@ -200,7 +200,7 @@
   .mint-interface {
     text-align: center;
   }
-  .unstables-minted {
+  .UnstableAnimals-minted {
     width: inherit;
   }
   .mint-interface button .mint-price {

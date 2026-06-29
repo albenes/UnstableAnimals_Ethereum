@@ -66,7 +66,7 @@ function UnstablePortrait({ id, nftId, appState, isBlank, contractAddress }) {
   }
 
   return <div
-    className='Unstable-portrait'
+    className="unstable-portrait"
     onClick={onClick}
   >
     <img id={id} className={mysteryClassName} src={mysteryUnstable}/>
