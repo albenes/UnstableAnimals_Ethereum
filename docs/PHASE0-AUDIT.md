@@ -26,7 +26,9 @@ El `main` actual del repo es un clon de **Space Shibas** modernizado por error:
 | UI | Solo mint | Mint + Timeline + Team + Footer |
 | Tests | 13 tests Hardhat + Vitest | Solo template roto (`Greeter`) |
 
-**Decisión:** modernizar desde `UnstableAnimals`, no desde `main`. Al terminar las fases, esta rama reemplazará `main`.
+**Decisión:** modernizar desde `UnstableAnimals`, no desde `main`. Al terminar las fases, esta rama reemplazaría `main`.
+
+> **Actualización:** `main` fue reemplazada con el código modernizado de `UnstableAnimals` (jun 2026). Ambas ramas apuntan al mismo contrato y toolchain.
 
 ## Problemas encontrados en Fase 0
 

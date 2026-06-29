@@ -16,13 +16,14 @@
 
 Constantes centralizadas en `src/config/contract.js`.
 
-## Estado del proyecto
+## Stack
 
-Estamos modernizando desde la rama `UnstableAnimals` (no desde `main`, que apuntaba al contrato Space Shibas por error).
-
-Ver [docs/PHASE0-AUDIT.md](docs/PHASE0-AUDIT.md) para el análisis completo y el plan de fases.
+- **Frontend:** React 18, Vite 6, ethers v6, SWR 2
+- **Contracts:** Hardhat 2, Solidity 0.8.4 (`UnstableAnimals.sol`)
 
 ## Desarrollo
+
+Requiere Node.js 18+ (ver `.nvmrc`).
 
 ```bash
 yarn install
@@ -32,3 +33,5 @@ yarn test:contracts     # 13 tests Hardhat
 yarn test               # tests de React (Vitest)
 yarn build              # build de producción
 ```
+
+Ver [docs/PHASE0-AUDIT.md](docs/PHASE0-AUDIT.md) para el historial de modernización.

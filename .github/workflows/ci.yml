@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [UnstableAnimals]
+    branches: [main, UnstableAnimals]
   pull_request:
-    branches: [UnstableAnimals]
+    branches: [main, UnstableAnimals]
 
 jobs:
   test:
