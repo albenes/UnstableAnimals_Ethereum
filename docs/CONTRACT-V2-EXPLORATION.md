@@ -1,5 +1,7 @@
 # Exploración: modernizar / redeploy del contrato Unstable Animals
 
+> **RAMA CONGELADA** — `cursor/contract-v2-exploration-eb02` no se mergeará. Ver `BRANCH-FROZEN.md`.
+
 Rama de simulación: `cursor/contract-v2-exploration-eb02`  
 Contrato actual (mainnet): `0xe29d2d356bffE827E4Df3B6cA9Fdc9819C3e2651`  
 Estado on-chain (jun 2026): ~44 minted, venta activa, precio 0.03 ETH
