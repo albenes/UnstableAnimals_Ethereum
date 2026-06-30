@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { Interface } from 'ethers'
 import { parsePurchasedTokenIds } from './parseMintReceipt'
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 const iface = new Interface([
   'event UnstableAnimalsBought(address buyer, uint256 UnstableAnimalsBought, uint256[10] UnstableAnimalsIndexes)',
   'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)',
@@ -25,5 +27,19 @@ describe('parsePurchasedTokenIds', () => {
     }
 
     expect(parsePurchasedTokenIds(receipt, iface)).toEqual([5, 9])
+  })
+
+  it('falls back to Transfer events from zero address', () => {
+    const encoded = iface.encodeEventLog('Transfer', [
+      ZERO_ADDRESS,
+      '0x0000000000000000000000000000000000000001',
+      42n,
+    ])
+
+    const receipt = {
+      logs: [{ topics: encoded.topics, data: encoded.data }],
+    }
+
+    expect(parsePurchasedTokenIds(receipt, iface)).toEqual([42])
   })
 })
