@@ -32,3 +32,6 @@ artifacts
 
 # IDE-specific
 /.idea
+
+# Personal manual checklist (local only, not committed)
+PENDIENTES-MANUAL.local.md
